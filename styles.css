@@ -1,0 +1,453 @@
+:root {
+  --bg: #14111c;
+  --surface: #1f1a2b;
+  --surface-2: #2a2438;
+  --border: #3a3250;
+  --text: #f1ebdd;
+  --muted: #a99fb8;
+  --gold: #d8b25a;
+  --gold-dark: #a5822f;
+  --good: #4f8fd8;
+  --good-bg: #16304f;
+  --evil: #d8534f;
+  --evil-bg: #4a1a1f;
+  --radius: 14px;
+  --serif: 'Cinzel', 'Trajan Pro', Georgia, 'Times New Roman', serif;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  background: radial-gradient(circle at 50% -10%, #2b2140 0%, var(--bg) 60%) fixed, var(--bg);
+  color: var(--text);
+  font: 17px/1.45 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
+  max-width: 560px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.logo {
+  font-family: var(--serif);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 700;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 16px calc(20px + env(safe-area-inset-bottom));
+  min-width: 0;
+}
+
+.screen.center { text-align: center; align-items: stretch; }
+.screen.pass { justify-content: center; }
+
+h1, h2 {
+  font-family: var(--serif);
+  margin: 0;
+  line-height: 1.2;
+}
+h1 { font-size: 1.7rem; }
+h2 { font-size: 1.2rem; margin-top: 8px; }
+
+p { margin: 0; }
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: .75rem;
+  color: var(--muted);
+}
+
+.muted { color: var(--muted); }
+.small { font-size: .85rem; }
+.hint { color: var(--muted); font-size: .85rem; margin-top: 4px; }
+.good-text { color: var(--good); }
+.evil-text { color: var(--evil); }
+
+.big-name {
+  font-size: 2.6rem;
+  color: var(--gold);
+  word-break: break-word;
+  margin: 4px 0 8px;
+}
+
+.error, .warning {
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: .92rem;
+}
+.error { background: var(--evil-bg); color: #ffd6d4; }
+.warning { background: #3d3216; color: #f4dfa4; }
+
+.recorded {
+  color: #9fe0a8;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
+/* ---------- Dugmad ---------- */
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  padding: 15px 18px;
+  border-radius: var(--radius);
+  width: 100%;
+  cursor: pointer;
+}
+.btn.primary {
+  background: linear-gradient(180deg, var(--gold), var(--gold-dark));
+  border-color: var(--gold-dark);
+  color: #1b1408;
+}
+.btn.danger { background: #8e2b2b; border-color: #a83a3a; color: #fff; }
+.btn.ghost { background: transparent; }
+.btn.link {
+  background: none;
+  border: none;
+  color: var(--muted);
+  text-decoration: underline;
+  font-weight: 400;
+  margin-top: 8px;
+}
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+
+.icon-btn {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 10px;
+  width: 42px;
+  height: 42px;
+  flex: none;
+  font-size: 1.05rem;
+  cursor: pointer;
+}
+.icon-btn:disabled { opacity: .3; }
+
+.bottom {
+  margin-top: auto;
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.bottom.row { flex-direction: row; }
+.bottom.row .btn.ghost { flex: 0 0 34%; }
+
+/* ---------- Igrači ---------- */
+
+.player-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.player-list li { display: flex; gap: 8px; align-items: center; }
+.player-list .num { width: 22px; text-align: right; color: var(--muted); flex: none; }
+.player-list input {
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  padding: 0 12px;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.player-list input:focus { outline: 2px solid var(--gold); outline-offset: -1px; }
+
+/* ---------- Uloge ---------- */
+
+.options { display: flex; flex-direction: column; gap: 8px; }
+.option {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  cursor: pointer;
+}
+.option input { width: 22px; height: 22px; margin: 2px 0 0; accent-color: var(--gold); flex: none; }
+.option span { display: flex; flex-direction: column; }
+.option small { color: var(--muted); font-size: .85rem; }
+
+.lineup { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font-size: .8rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+.chip.good { color: #b9d6f7; background: var(--good-bg); border-color: var(--good); }
+.chip.evil { color: #f6c3c1; background: var(--evil-bg); border-color: var(--evil); }
+
+/* ---------- Karta uloge ---------- */
+
+.role-card {
+  border-radius: 18px;
+  padding: 24px 16px;
+  margin: 6px 0;
+  border: 2px solid;
+}
+.role-card.good { background: linear-gradient(160deg, var(--good-bg), #0f1d31); border-color: var(--good); }
+.role-card.evil { background: linear-gradient(160deg, var(--evil-bg), #2a0e12); border-color: var(--evil); }
+.role-sigil { font-size: 2.4rem; line-height: 1; margin-bottom: 8px; }
+.role-card.good .role-sigil { color: var(--good); }
+.role-card.evil .role-sigil { color: var(--evil); }
+.role-card h1 { font-size: 2rem; }
+.team-label { margin-top: 6px; color: var(--muted); }
+.role-desc { padding: 0 4px; }
+
+.knowledge {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.seen {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.seen li {
+  font-weight: 700;
+  font-size: 1.15rem;
+  background: var(--surface-2);
+  border-radius: 10px;
+  padding: 6px 14px;
+  color: var(--gold);
+}
+
+/* ---------- Tabla ---------- */
+
+.track {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin: 6px 0;
+}
+.mission {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+.mission .size {
+  width: 100%;
+  max-width: 58px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: var(--surface);
+  border: 2px solid var(--border);
+}
+.mission .label { font-size: .68rem; color: var(--muted); white-space: nowrap; }
+.mission .two { font-size: .62rem; color: var(--gold); white-space: nowrap; }
+.mission.current .size { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 0 3px rgba(216, 178, 90, .2); }
+.mission.success .size { background: var(--good-bg); border-color: var(--good); color: var(--good); }
+.mission.fail .size { background: var(--evil-bg); border-color: var(--evil); color: var(--evil); }
+
+.score { text-align: center; font-weight: 600; }
+.lady-line {
+  text-align: center;
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 8px;
+}
+.history {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: .9rem;
+  color: var(--muted);
+}
+
+/* ---------- Izbor ---------- */
+
+.pick-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.pick {
+  appearance: none;
+  font: inherit;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 10px;
+  cursor: pointer;
+  word-break: break-word;
+}
+.pick.on { border-color: var(--gold); background: #3a3018; color: var(--gold); }
+.pick.on.evil { border-color: var(--evil); background: var(--evil-bg); color: #ffd6d4; }
+
+/* ---------- Glasanje ---------- */
+
+.vote-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 16px 0;
+}
+.vote {
+  appearance: none;
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 2px solid var(--border);
+  border-radius: 18px;
+  aspect-ratio: 3 / 4;
+  cursor: pointer;
+}
+.vote:active { border-color: var(--gold); }
+
+/* ---------- Rezultat ---------- */
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 12px 0;
+  perspective: 800px;
+}
+.card {
+  position: relative;
+  width: 82px;
+  height: 116px;
+  transform-style: preserve-3d;
+  transition: transform .6s;
+}
+.card.flipped { transform: rotateY(180deg); }
+.face {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border: 2px solid var(--border);
+}
+.face.back { background: repeating-linear-gradient(45deg, var(--surface-2) 0 8px, var(--surface) 8px 16px); color: var(--gold); font-size: 1.6rem; font-family: var(--serif); }
+.face.front { transform: rotateY(180deg); }
+.card.success .front { background: var(--good-bg); border-color: var(--good); color: #cfe3fb; }
+.card.fail .front { background: var(--evil-bg); border-color: var(--evil); color: #ffd6d4; }
+.verdict { font-size: 1.2rem; font-weight: 700; }
+
+/* ---------- Kraj ---------- */
+
+.banner {
+  border-radius: 18px;
+  padding: 20px 16px;
+  text-align: center;
+  border: 2px solid;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.banner.good { background: var(--good-bg); border-color: var(--good); }
+.banner.evil { background: var(--evil-bg); border-color: var(--evil); }
+
+.roles-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.roles-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border-left: 4px solid;
+  background: var(--surface);
+}
+.roles-list li.good { border-color: var(--good); }
+.roles-list li.good b { color: var(--good); }
+.roles-list li.evil { border-color: var(--evil); }
+.roles-list li.evil b { color: var(--evil); }
+
+/* ---------- Modal ---------- */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 6, 12, .7);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  z-index: 10;
+}
+.dialog {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px 16px;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

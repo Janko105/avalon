@@ -1,0 +1,15 @@
+{
+  "name": "Avalon",
+  "short_name": "Avalon",
+  "description": "Avalon na jednom telefonu – tajne uloge, misije i glasanje.",
+  "lang": "sr-Latn",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#14111c",
+  "theme_color": "#14111c",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
