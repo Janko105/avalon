@@ -1,11 +1,6 @@
 # Avalon – jedan telefon
 
-Društvena igra Avalon za 5–10 igrača na jednom telefonu koji se dodaje u krugu. Statičan sajt, bez backenda, radi i offline (PWA).
-
-- Tajna podela uloga: Merlin, Ubica, Persival, Morgana, Mordred, Oberon, lojalni sluge i Mordredove sluge
-- Izbor tima i tajno glasanje na misiji (dobri ne mogu da glasaju „Pada”)
-- Tabla misija, 2 „Pada” na 4. misiji kod 7+ igrača, automatski kraj
-- Gospa od Jezera, ubistvo Merlina, podsetnik uloge iz menija
+Društvena igra Avalon za 5–10 igrača na jednom telefonu koji se dodaje u krugu.
 
 ## Lokalno
 
