@@ -20,8 +20,8 @@ export const ROLES = {
     team: 'good',
     desc: 'Znaš ko su zli. Pomozi dobrima, ali pazi – ako Ubica na kraju pogodi ko si, zli pobeđuju.',
   },
-  percival: {
-    name: 'Percival',
+  persival: {
+    name: 'Persival',
     team: 'good',
     desc: 'Znaš ko je Merlin. Čuvaj ga i ne otkrivaj ga zlima.',
   },
@@ -38,7 +38,7 @@ export const ROLES = {
   morgana: {
     name: 'Morgana',
     team: 'evil',
-    desc: 'Percival te vidi kao mogućeg Merlina. Pretvaraj se da si Merlin.',
+    desc: 'Persival te vidi kao mogućeg Merlina. Pretvaraj se da si Merlin.',
   },
   mordred: {
     name: 'Mordred',
@@ -57,7 +57,7 @@ export const ROLES = {
   },
 };
 
-export const OPTIONAL_ROLES = ['merlin', 'percival', 'morgana', 'mordred', 'oberon'];
+export const OPTIONAL_ROLES = ['merlin', 'persival', 'morgana', 'mordred', 'oberon'];
 
 export function isEvil(role) {
   return ROLES[role].team === 'evil';
@@ -67,7 +67,7 @@ export function failsNeeded(playerCount, missionIndex) {
   return playerCount >= 7 && missionIndex === 3 ? 2 : 1;
 }
 
-// options: { merlin, percival, morgana, mordred, oberon } (boolean)
+// options: { merlin, persival, morgana, mordred, oberon } (boolean)
 // Merlin automatski uključuje Ubicu.
 export function buildRoleList(playerCount, options) {
   const evilCount = EVIL_COUNT[playerCount];
@@ -78,7 +78,7 @@ export function buildRoleList(playerCount, options) {
     good.push('merlin');
     evil.push('assassin');
   }
-  if (options.percival) good.push('percival');
+  if (options.persival) good.push('persival');
   if (options.morgana) evil.push('morgana');
   if (options.mordred) evil.push('mordred');
   if (options.oberon) evil.push('oberon');
@@ -101,11 +101,11 @@ export function validateSetup(playerCount, options) {
     errors.push(`Sa ${playerCount} igrača ima samo ${evilCount} zlih, a izabrano je ${special} zlih uloga` +
       (options.merlin ? ' (Merlin uvek dovodi Ubicu).' : '.'));
   }
-  if (options.percival && !options.merlin) {
-    errors.push('Percival nema smisla bez Merlina.');
+  if (options.persival && !options.merlin) {
+    errors.push('Persival nema smisla bez Merlina.');
   }
-  if (options.morgana && !options.percival) {
-    warnings.push('Morgana bez Percivala nema posebnu moć.');
+  if (options.morgana && !options.persival) {
+    warnings.push('Morgana bez Persivala nema posebnu moć.');
   }
   return { ok: errors.length === 0, errors, warnings, good: playerCount - evilCount, evil: evilCount };
 }
@@ -138,7 +138,7 @@ export function knowledge(roles, index) {
       note: has('mordred') ? 'Mordred je u igri i sakriven je od tebe.' : '',
     };
   }
-  if (role === 'percival') {
+  if (role === 'persival') {
     const seen = others.filter((i) => roles[i] === 'merlin' || roles[i] === 'morgana');
     return {
       text: has('morgana') ? 'Jedan od njih je Merlin, a drugi Morgana:' : 'Merlin je:',

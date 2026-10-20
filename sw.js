@@ -1,5 +1,5 @@
 // Offline keš: prikazuje keširanu verziju odmah, a u pozadini osvežava keš.
-const CACHE = 'avalon-v1';
+const CACHE = 'avalon-v2';
 const ASSETS = [
   './',
   './index.html',

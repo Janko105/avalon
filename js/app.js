@@ -15,7 +15,7 @@ function freshState() {
   return {
     screen: 'players',
     players: loadNames() || ['', '', '', '', ''],
-    options: { merlin: true, percival: true, morgana: true, mordred: false, oberon: false, lady: false },
+    options: { merlin: true, persival: true, morgana: true, mordred: false, oberon: false, lady: false },
     error: '',
     game: null,
     modal: null,
@@ -41,6 +41,12 @@ function loadState() {
   try {
     const s = JSON.parse(localStorage.getItem(STATE_KEY));
     if (!s || !s.screen) return null;
+    // Stara verzija je Persivala čuvala kao 'percival'.
+    if ('percival' in s.options) {
+      s.options.persival = s.options.percival;
+      delete s.options.percival;
+    }
+    if (s.game) s.game.roles = s.game.roles.map((r) => (r === 'percival' ? 'persival' : r));
     // Posle osvežavanja nikad ne prikazuj tajni ekran.
     if (s.game) {
       s.game.reveal.shown = false;
@@ -149,8 +155,8 @@ function renderPlayers() {
 
 const ROLE_OPTIONS = [
   { key: 'merlin', label: 'Merlin + Ubica', hint: 'Merlin zna zle; Ubica na kraju pokušava da ga ubije.' },
-  { key: 'percival', label: 'Percival', hint: 'Dobar. Vidi Merlina (i Morganu).' },
-  { key: 'morgana', label: 'Morgana', hint: 'Zla. Percivalu izgleda kao Merlin.' },
+  { key: 'persival', label: 'Persival', hint: 'Dobar. Vidi Merlina (i Morganu).' },
+  { key: 'morgana', label: 'Morgana', hint: 'Zla. Persivalu izgleda kao Merlin.' },
   { key: 'mordred', label: 'Mordred', hint: 'Zli koga Merlin ne vidi.' },
   { key: 'oberon', label: 'Oberon', hint: 'Zli koji ne zna ostale zle, i oni ne znaju njega.' },
 ];
@@ -364,8 +370,8 @@ function renderLady() {
 function renderAssassin() {
   const g = state.game;
   const assassin = g.roles.indexOf('assassin');
-  const evil = g.roles.map((r, i) => i).filter((i) => R.isEvil(g.roles[i]));
-  const good = g.roles.map((r, i) => i).filter((i) => !R.isEvil(g.roles[i]));
+  const evil = g.roles.map((_, i) => i).filter((i) => R.isEvil(g.roles[i]));
+  const good = g.roles.map((_, i) => i).filter((i) => !R.isEvil(g.roles[i]));
   const t = g.assassinTarget;
   return `
     <section class="screen">

@@ -2,16 +2,16 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import * as R from '../js/rules.js';
 
-const ALL = { merlin: true, percival: true, morgana: true, mordred: true, oberon: true };
-const NONE = { merlin: false, percival: false, morgana: false, mordred: false, oberon: false };
+const ALL = { merlin: true, persival: true, morgana: true, mordred: true, oberon: true };
+const NONE = { merlin: false, persival: false, morgana: false, mordred: false, oberon: false };
 
 test('podela ima tačan broj zlih za 5–10 igrača', () => {
   for (let n = 5; n <= 10; n++) {
     for (let k = 0; k < 50; k++) {
-      const roles = R.assignRoles(n, { merlin: true, percival: true, morgana: true });
+      const roles = R.assignRoles(n, { merlin: true, persival: true, morgana: true });
       assert.equal(roles.length, n);
       assert.equal(roles.filter(R.isEvil).length, R.EVIL_COUNT[n]);
-      for (const r of ['merlin', 'percival', 'assassin', 'morgana']) assert.ok(roles.includes(r), `${n}: ${r}`);
+      for (const r of ['merlin', 'persival', 'assassin', 'morgana']) assert.ok(roles.includes(r), `${n}: ${r}`);
     }
   }
 });
@@ -26,35 +26,35 @@ test('validacija: previše zlih uloga', () => {
   assert.equal(R.validateSetup(5, ALL).ok, false);
   assert.equal(R.validateSetup(9, ALL).ok, false);
   assert.equal(R.validateSetup(10, ALL).ok, true);
-  assert.equal(R.validateSetup(5, { merlin: true, percival: true, morgana: true }).ok, true);
+  assert.equal(R.validateSetup(5, { merlin: true, persival: true, morgana: true }).ok, true);
   assert.equal(R.validateSetup(5, { merlin: true, morgana: true, mordred: true }).ok, false);
   assert.equal(R.validateSetup(7, { merlin: true, morgana: true, mordred: true }).ok, true);
 });
 
-test('validacija: Percival traži Merlina, broj igrača', () => {
-  assert.equal(R.validateSetup(6, { percival: true }).ok, false);
+test('validacija: Persival traži Merlina, broj igrača', () => {
+  assert.equal(R.validateSetup(6, { persival: true }).ok, false);
   assert.equal(R.validateSetup(4, NONE).ok, false);
   assert.equal(R.validateSetup(11, NONE).ok, false);
 });
 
 test('Merlin vidi zle osim Mordreda, vidi Oberona', () => {
-  const roles = ['merlin', 'loyal', 'mordred', 'oberon', 'assassin', 'percival', 'loyal', 'loyal', 'morgana', 'loyal'];
+  const roles = ['merlin', 'loyal', 'mordred', 'oberon', 'assassin', 'persival', 'loyal', 'loyal', 'morgana', 'loyal'];
   const k = R.knowledge(roles, 0);
   assert.deepEqual(k.players, [3, 4, 8]);
   assert.ok(k.note);
 });
 
 test('zli se vide međusobno, ali ne Oberona; Oberon ne vidi nikoga', () => {
-  const roles = ['merlin', 'loyal', 'mordred', 'oberon', 'assassin', 'percival', 'loyal', 'loyal', 'morgana', 'loyal'];
+  const roles = ['merlin', 'loyal', 'mordred', 'oberon', 'assassin', 'persival', 'loyal', 'loyal', 'morgana', 'loyal'];
   assert.deepEqual(R.knowledge(roles, 2).players, [4, 8]);
   assert.deepEqual(R.knowledge(roles, 4).players, [2, 8]);
   assert.deepEqual(R.knowledge(roles, 3).players, []);
 });
 
-test('Percival vidi Merlina i Morganu', () => {
-  const roles = ['morgana', 'loyal', 'percival', 'merlin', 'assassin'];
+test('Persival vidi Merlina i Morganu', () => {
+  const roles = ['morgana', 'loyal', 'persival', 'merlin', 'assassin'];
   assert.deepEqual(R.knowledge(roles, 2).players, [0, 3]);
-  const noMorgana = ['minion', 'loyal', 'percival', 'merlin', 'assassin'];
+  const noMorgana = ['minion', 'loyal', 'persival', 'merlin', 'assassin'];
   assert.deepEqual(R.knowledge(noMorgana, 2).players, [3]);
 });
 
