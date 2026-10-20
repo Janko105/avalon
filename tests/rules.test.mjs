@@ -90,3 +90,14 @@ test('veličine timova po zvaničnoj tabeli', () => {
   assert.deepEqual(R.TEAM_SIZES[7], [2, 3, 3, 4, 4]);
   assert.deepEqual(R.TEAM_SIZES[10], [3, 4, 4, 5, 5]);
 });
+
+test('vođa ide redom i vraća se na početak', () => {
+  assert.equal(R.nextLeader(0, 5), 1);
+  assert.equal(R.nextLeader(4, 5), 0);
+  assert.equal(R.nextLeader(9, 10), 0);
+});
+
+test('Gospa počinje desno od prvog vođe', () => {
+  assert.equal(R.ladyStartHolder(3, 7), 2);
+  assert.equal(R.ladyStartHolder(0, 7), 6);
+});

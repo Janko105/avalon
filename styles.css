@@ -300,6 +300,32 @@ p { margin: 0; }
 .mission.fail .size { background: var(--evil-bg); border-color: var(--evil); color: var(--evil); }
 
 .score { text-align: center; font-weight: 600; }
+.leader-line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: var(--surface);
+  border: 1px solid var(--gold-dark);
+  border-radius: var(--radius);
+  padding: 10px;
+}
+.leader-line b { font-family: var(--serif); font-size: 1.6rem; color: var(--gold); word-break: break-word; }
+.rejections {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.rejections .dots { display: flex; gap: 6px; }
+.rejections i {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+}
+.rejections i.on { background: var(--evil); border-color: var(--evil); }
+.rejections i:last-child { border-color: var(--evil); }
 .lady-line {
   text-align: center;
   background: var(--surface);

@@ -128,7 +128,7 @@ export function assignRoles(playerCount, options, rng = Math.random) {
 // Vraća { text, players: [indeksi], note }.
 export function knowledge(roles, index) {
   const role = roles[index];
-  const others = roles.map((r, i) => i).filter((i) => i !== index);
+  const others = roles.map((_, i) => i).filter((i) => i !== index);
   const has = (r) => roles.includes(r);
 
   if (role === 'merlin') {
@@ -173,6 +173,20 @@ export function missionsStatus(results) {
   if (failed >= 3) return 'evil';
   if (passed >= 3) return 'good';
   return 'ongoing';
+}
+
+// Pet odbijenih timova zaredom – zli pobeđuju.
+export const MAX_REJECTIONS = 5;
+
+// Vođa ide redom kako igrači sede (redosled unosa).
+export function nextLeader(leader, playerCount) {
+  return (leader + 1) % playerCount;
+}
+
+// Gospa od Jezera počinje kod igrača desno od prvog vođe,
+// tj. onog koji bi poslednji došao na red da bude vođa.
+export function ladyStartHolder(leader, playerCount) {
+  return (leader - 1 + playerCount) % playerCount;
 }
 
 // Gospa od Jezera se koristi posle 2., 3. i 4. misije (indeksi 1–3).

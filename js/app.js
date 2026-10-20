@@ -47,6 +47,11 @@ function loadState() {
       delete s.options.percival;
     }
     if (s.game) s.game.roles = s.game.roles.map((r) => (r === 'percival' ? 'persival' : r));
+    // Stara verzija nije pratila vođu.
+    if (s.game && s.game.leader === undefined) {
+      s.game.leader = 0;
+      s.game.rejections = 0;
+    }
     // Posle osvežavanja nikad ne prikazuj tajni ekran.
     if (s.game) {
       s.game.reveal.shown = false;
@@ -214,6 +219,29 @@ function renderReveal() {
     </section>`;
 }
 
+function renderLeader() {
+  return `
+    <section class="screen">
+      <h1>Ko prvi bira tim?</h1>
+      <p class="muted">Svi su videli uloge. Izaberi prvog vođu – posle njega vođa ide redom kako sedite.</p>
+      <div class="pick-list">
+        ${state.players.map((p, i) => `<button class="pick" data-action="pickLeader" data-idx="${i}">${esc(p)}</button>`).join('')}
+      </div>
+      <div class="bottom">
+        <button class="btn ghost" data-action="randomLeader">Nasumično</button>
+      </div>
+    </section>`;
+}
+
+function rejectionDots() {
+  const k = state.game.rejections;
+  return `
+    <div class="rejections">
+      <span class="muted small">Neizglasani timovi zaredom</span>
+      <span class="dots">${Array.from({ length: R.MAX_REJECTIONS }, (_, i) => `<i class="${i < k ? 'on' : ''}"></i>`).join('')}</span>
+    </div>`;
+}
+
 function missionTrack() {
   const g = state.game;
   const n = count();
@@ -243,14 +271,21 @@ function renderBoard() {
       <h1>Misija ${g.mission + 1}</h1>
       ${missionTrack()}
       <p class="score"><span class="good-text">Uspešne: ${passed}</span> · <span class="evil-text">Pale: ${failed}</span></p>
+      <div class="leader-line">
+        <span class="eyebrow">Vođa</span>
+        <b>${name(g.leader)}</b>
+        <span class="muted small">predlaže tim od ${size} igrača</span>
+      </div>
+      ${rejectionDots()}
       ${g.lady ? `<p class="lady-line">Gospa od Jezera: <b>${name(g.lady.holder)}</b></p>` : ''}
       ${g.results.length ? `
         <div class="history">
           ${g.results.map((r, i) => `
-            <p><b>${i + 1}.</b> ${r.team.map(name).join(', ')} – <span class="${r.failed ? 'evil-text' : 'good-text'}">${r.failed ? 'pala' : 'uspela'}</span> (${r.fails} „Pada”)</p>`).join('')}
+            <p><b>${i + 1}.</b> ${r.team.map(name).join(', ')} – <span class="${r.failed ? 'evil-text' : 'good-text'}">${r.failed ? 'pala' : 'uspela'}</span> (${r.fails} „Pada”)${r.leader !== undefined ? ` · vođa ${name(r.leader)}` : ''}</p>`).join('')}
         </div>` : ''}
       <div class="bottom">
-        <button class="btn primary" data-action="toTeam">Izaberi tim (${size} igrača)</button>
+        <button class="btn primary" data-action="toTeam">Tim izglasan – izaberi igrače</button>
+        <button class="btn ghost" data-action="askReject">Tim nije izglasan</button>
       </div>
     </section>`;
 }
@@ -262,7 +297,7 @@ function renderTeam() {
   return `
     <section class="screen">
       <h1>Tim za misiju ${g.mission + 1}</h1>
-      <p class="muted">Izaberi tačno ${size} igrača. Izabrano: <b>${picked}/${size}</b></p>
+      <p class="muted">Vođa <b>${name(g.leader)}</b> – izaberi tačno ${size} igrača. Izabrano: <b>${picked}/${size}</b></p>
       ${R.failsNeeded(count(), g.mission) > 1 ? '<p class="warning">Ova misija pada tek sa 2 „Pada”.</p>' : ''}
       <div class="pick-list">
         ${state.players.map((p, i) => `
@@ -438,6 +473,7 @@ function renderPeek() {
 
 function renderModal() {
   if (!state.modal) return '';
+  if (state.modal === 'reject') return renderRejectModal();
   if (state.modal === 'menu') {
     return `
       <div class="overlay" data-action="closeModal">
@@ -460,10 +496,28 @@ function renderModal() {
     </div>`;
 }
 
+function renderRejectModal() {
+  const g = state.game;
+  const k = g.rejections + 1;
+  const last = k >= R.MAX_REJECTIONS;
+  return `
+    <div class="overlay" data-action="closeModal">
+      <div class="dialog" data-stop>
+        <h2>Tim nije izglasan?</h2>
+        ${last
+          ? `<p class="warning">Ovo je ${R.MAX_REJECTIONS}. neizglasan tim zaredom – zli pobeđuju.</p>`
+          : `<p class="muted">Vođa prelazi na <b>${name(R.nextLeader(g.leader, count()))}</b>. Neizglasanih zaredom: ${k}/${R.MAX_REJECTIONS}.</p>`}
+        <button class="btn danger" data-action="rejectTeam">Da, tim nije izglasan</button>
+        <button class="btn ghost" data-action="closeModal">Otkaži</button>
+      </div>
+    </div>`;
+}
+
 const SCREENS = {
   players: renderPlayers,
   setup: renderSetup,
   reveal: renderReveal,
+  leader: renderLeader,
   board: renderBoard,
   team: renderTeam,
   vote: renderVote,
@@ -535,16 +589,18 @@ const actions = {
   startGame() {
     if (!R.validateSetup(count(), state.options).ok) return;
     update(() => {
-      const holder = Math.floor(Math.random() * count());
       state.game = {
         roles: R.assignRoles(count(), state.options),
         results: [],
         mission: 0,
+        leader: 0,
+        rejections: 0,
         reveal: { index: 0, shown: false },
         team: [],
         vote: { index: 0, shown: false, warn: false, votes: [] },
         result: null,
-        lady: state.options.lady ? { holder, past: [holder], target: null, shown: false } : null,
+        // Držalac Gospe se određuje kad se izabere prvi vođa.
+        lady: state.options.lady ? { holder: 0, past: [], target: null, shown: false } : null,
         assassinTarget: null,
         peek: { player: null, shown: false },
         winner: null,
@@ -561,7 +617,38 @@ const actions = {
       const r = state.game.reveal;
       r.shown = false;
       r.index++;
-      if (r.index >= count()) state.screen = 'board';
+      if (r.index >= count()) state.screen = 'leader';
+    });
+  },
+  pickLeader({ idx }) {
+    update(() => {
+      const g = state.game;
+      g.leader = +idx;
+      if (g.lady) {
+        g.lady.holder = R.ladyStartHolder(g.leader, count());
+        g.lady.past = [g.lady.holder];
+      }
+      state.screen = 'board';
+    });
+  },
+  randomLeader() {
+    actions.pickLeader({ idx: Math.floor(Math.random() * count()) });
+  },
+  askReject() {
+    update(() => (state.modal = 'reject'));
+  },
+  rejectTeam() {
+    update(() => {
+      const g = state.game;
+      state.modal = null;
+      g.team = [];
+      g.rejections++;
+      if (g.rejections >= R.MAX_REJECTIONS) {
+        finishGame('evil', `${R.MAX_REJECTIONS} timova zaredom nije izglasano.`);
+        return;
+      }
+      g.leader = R.nextLeader(g.leader, count());
+      state.screen = 'board';
     });
   },
   toBoard() {
@@ -613,7 +700,7 @@ const actions = {
       v.warn = false;
       if (v.index >= g.team.length) {
         const out = R.missionOutcome(v.votes, count(), g.mission);
-        g.results.push({ team: g.team.slice(), fails: out.fails, failed: out.failed });
+        g.results.push({ team: g.team.slice(), fails: out.fails, failed: out.failed, leader: g.leader });
         g.result = { cards: R.shuffle(v.votes), flipped: 0 };
         v.votes = [];
         state.screen = 'result';
@@ -629,6 +716,8 @@ const actions = {
       const finished = g.mission;
       const status = R.missionsStatus(g.results);
       g.team = [];
+      g.leader = R.nextLeader(g.leader, count());
+      g.rejections = 0;
       if (status === 'evil') return finishGame('evil', 'Tri misije su pale.');
       if (status === 'good') {
         if (g.roles.includes('merlin')) {
